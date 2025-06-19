@@ -7,12 +7,12 @@ I finished following the Bare Bones tutorial on OSDev Wiki to write a simple ker
 ![Screenshot 2025-06-13 200743](https://github.com/user-attachments/assets/7a087974-e19a-4b87-95ed-2ba2394c16d8)
 
 Resources:
-https://wiki.osdev.org/Bare_Bones
+- https://wiki.osdev.org/Bare_Bones
 
 ## 6/18/25
 I finished following the Meaty Skeleton tutorial on OSDev Wiki, which is a continuation of the Bare Bones tutorial. It is a template operating system that serves as an example of how to structure the project, including things like a freestanding kernel C library, arch directories for architecture-dependent code, and different Makefiles and build scripts. I plan on taking some time to study this structure and all the code in it so I know what's going on instead of blindly copying and pasting without learning what the different parts do. I've found some resources to help me figure out some next steps, including another OSDev Wiki article and a YouTube playlist by Daedalus Community that looks fairly promising for figuring out general next steps.
 
 Resources:
-https://wiki.osdev.org/Meaty_Skeleton
-https://wiki.osdev.org/Going_Further_on_x86
-https://youtu.be/MwPjvJ9ulSc?feature=shared
+- https://wiki.osdev.org/Meaty_Skeleton
+- https://wiki.osdev.org/Going_Further_on_x86
+- https://youtu.be/MwPjvJ9ulSc?feature=shared
