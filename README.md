@@ -24,3 +24,15 @@ Resources:
 - https://wiki.osdev.org/Going_Further_on_x86
 - https://youtu.be/MwPjvJ9ulSc?feature=shared
 - https://wiki.osdev.org/Global_Descriptor_Table
+
+## 6/30/25
+I have been working on setting up the GDT and reading the OSDev Wiki pages closely. Initially, I got this error message: 
+
+#### Booting from hard disk. Boot failed: could not read the boot disk. Booting from floppy. Boot failed: could not read the boot disk. Booting from DVD/CD
+
+I figured out that the issue was somewhere in my gdt_flush assembly function, which is supposed to flush the GDT set up by GRUB and replace it with my own. I did some research on how to use GDB with the kernel and thankfully there was an OSDev Wiki article. I looked closely at the GDT tutorial page and used GDB to make sure the bits were set correctly for each entry in the table. After making sure there weren't any issues with my gdt_entry struct and how I was setting its fields, I continued using GDB to find the issue. It turns out that I forgot a dollar sign so instead of moving the immediate value 0x10 to the %eax register, I moved the contents of memory address 0x10 to %eax. This messed up the values in the segment registers because I used %eax to set %ds, %es, %fs, %gs, and %ss. The GDT seems to be working properly now after adding the dollar sign. My next step is to start researching and working on the IDT.
+
+Resources:
+- https://wiki.osdev.org/Global_Descriptor_Table
+- https://wiki.osdev.org/GDT_Tutorial
+- https://wiki.osdev.org/GDB
