@@ -8,7 +8,7 @@ typedef struct __attribute__((packed)) gdt_entry {
     uint16_t limit;      // bits 0–15 of limit
     uint16_t base_low;       // bits 0–15 of base
     uint8_t  base_mid;    // bits 16–23 of base
-    uint8_t  access;         // access flags
+    uint8_t  access;         // access byte
     uint8_t  flags;    // flags first 4 bits, limit bits 16-19 last 4 bits
     uint8_t  base_high;      // bits 24–31 of base
 } gdt_entry_t ;

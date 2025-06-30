@@ -1,5 +1,6 @@
 #include <kernel/gdt.h>
 #include <stdint.h>
+#include <stdio.h>
 
 extern void gdt_flush(gdt_ptr_t *ptr);
 
@@ -8,7 +9,7 @@ gdt_ptr_t gdt_ptr;
 
 void initgdt() {
     gdt_ptr.size = (sizeof(gdt_entry_t) * 5) - 1;
-    gdt_ptr.offset = (uint32_t) &gdt_entries;
+    gdt_ptr.offset = &gdt_entries;
 
     gdt_insert(0, 0, 0, 0, 0);  //Null segment
     gdt_insert(1, 0, 0xFFFFFFFF, 0x9A, 0xCF);   //Kernel code segment
