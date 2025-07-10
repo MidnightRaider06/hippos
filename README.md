@@ -1,5 +1,5 @@
 # hippos
-🦛hippOS is a hobby OS kernel that I will attempt to implement from scratch during Summer 2025 as a learning experience. I will document my progress over the summer in this README file including any challenges I face and resources I use.
+🦛hippOS is a hobby OS kernel that I will attempt to implement from scratch during Summer 2025 and beyond as a learning experience. I will document my progress in this README including any challenges I face and resources I use.
 
 ## 6/13/25
 I finished following the Bare Bones tutorial on OSDev Wiki to write a simple kernel for 32-bit x86. I got familiar with setting up a cross-compiler, using it to assemble object files and link them into a final kernel, and testing an OS using QEMU. I still have to figure out my next steps with this project, including how a project like this should be properly structured, what my target platform should be (32-bit or 64-bit), and the features I should prioritize first.
@@ -36,3 +36,14 @@ Resources:
 - https://wiki.osdev.org/Global_Descriptor_Table
 - https://wiki.osdev.org/GDT_Tutorial
 - https://wiki.osdev.org/GDB
+
+## 7/10/25
+I've been reading up on the different types of interrupts, the IDT, and different gate types. I also read about PICs and how they manage hardware interrupts. I finished setting up the IDT and creating a table of ISR stubs. Right now, the IDT code sets up interrupt vectors 0–31 (CPU exceptions) in the IDT, where each entry points to its corresponding ISR stub handler from isr_stub_table[]. The attribute for all the IDT entries is set to 0x8E, making them interrupt gates, so there aren't any trap gates yet. From my understanding after researching a bit, starting with only interrupt gates in the early stages is safer because they clear the IF flag (disabling maskable interrupts until iret restores IF), making sure that any unpredictable behavior is avoided if an interrupt occurs while another is being handled. Right now, exceptions that push an error code onto the stack and ones that don't are handled the same way with the same exception_handler() function, which I will have to eventually change. The exception_handler() function just hangs the computer right now. One issue I faced was with defining data types in my libc; I created a stdbool.h but it turns out stdbool.h is already included in a freestanding environment, and the resulting error broke code that was working before and wasn't changed.
+
+My next step is probably to enable an interrupt controller, most likely PIC instead of APIC, because it's simpler and I want to learn the fundamentals. I did some reading about master and slave PICs but I have to look into it more. Hopefully I can get keyboard input soon. When I have time, I might also clean up the build process for the project because there are a bunch of scripts in the root right now. Even though executing the qemu.sh script is enough to build and test the project, having a Makefile in the root will look neater, but this is lower priority.
+
+Resources:
+- https://wiki.osdev.org/Interrupts
+- https://wiki.osdev.org/Interrupts_Tutorial
+- https://wiki.osdev.org/8259_PIC
+- https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf
