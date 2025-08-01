@@ -1,4 +1,5 @@
 #include <kernel/idt.h>
+#include <kernel/pic.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -40,4 +41,6 @@ void initidt() {
 
     __asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
     __asm__ volatile ("sti"); // set the interrupt flag
+
+    PIC_remap(PIC1, PIC2);
 }
