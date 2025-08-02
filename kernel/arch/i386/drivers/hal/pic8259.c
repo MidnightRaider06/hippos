@@ -1,4 +1,4 @@
-#include <kernel/pic.h>
+#include <kernel/pic8259.h>
 #include <kernel/io.h>
 
 /**

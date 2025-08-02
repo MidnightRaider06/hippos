@@ -1,5 +1,4 @@
-#ifndef IO_H
-#define IO_H
+#pragma once
 
 #include <stdint.h>
 
@@ -15,9 +14,8 @@ static inline uint8_t inb(uint16_t port) {
     return ret;
 }
 
-// Small delay between I/O ops
+// Small delay between I/O ops, writes gibberish to port 0x80
 static inline void io_wait(void) {
     __asm__ volatile ("outb %%al, $0x80" : : "a"(0));
 }
 
-#endif

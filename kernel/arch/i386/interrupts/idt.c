@@ -1,5 +1,5 @@
 #include <kernel/idt.h>
-#include <kernel/pic.h>
+#include <kernel/pic8259.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
