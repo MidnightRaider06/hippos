@@ -12,9 +12,12 @@ static idtr_t idtr;
 static bool vectors[IDT_MAX_DESCRIPTORS];
 
 // General exception handler
-void exception_handler() {
+void interrupt_handler(uint32_t interruptCode) {
+
+    if (interruptCode < 32) {
+        printf("CPU EXCEPTION: \n");
+    }
     __asm__ volatile ("cli; hlt"); // Completely hangs the computer
-    for (;;) {}
 }
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {

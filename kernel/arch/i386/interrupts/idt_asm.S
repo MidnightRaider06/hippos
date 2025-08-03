@@ -1,21 +1,25 @@
 .section .text
-.globl exception_handler
+.globl interrupt_handler
 
 .macro isr_err_stub num
 .globl isr_stub_\num
 isr_stub_\num:
-    call exception_handler
+    pushl $\num              # Push interrupt number onto the stack
+    call interrupt_handler
+    addl $4, %esp            # Clean up interrupt number after call
     iret
 .endm
 
 .macro isr_no_err_stub num
 .globl isr_stub_\num
 isr_stub_\num:
-    call exception_handler
+    pushl $\num              # Push interrupt number onto the stack
+    call interrupt_handler
+    addl $4, %esp            # Clean up interrupt number after call
     iret
 .endm
 
-.extern exception_handler
+.extern interrupt_handler
 
     isr_no_err_stub 0
     isr_no_err_stub 1
