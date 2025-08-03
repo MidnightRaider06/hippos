@@ -47,3 +47,16 @@ Resources:
 - https://wiki.osdev.org/Interrupts_Tutorial
 - https://wiki.osdev.org/8259_PIC
 - https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf
+
+## 8/2/25
+I finished reading about the 8259 PIC chips in the x86 architecture and successfully (I think) initialized the master and slave PICs. The code for that is pretty much just boilerplate and when I was debugging using GDB, I didn't see anything that suggested anything was wrong. I also made sure that the CPU exceptions are working as intended. I originally included a division-by-zero line in kernel_main, so I had a line with "int x = 5 / 0;" and the exception handler was supposed to print a "CPU EXCEPTION" message to the terminal. However, this message wasn't printed when I tested in QEMU regularly, and it worked sometimes when testing using GDB (depending on whether I used si or something like n 100). This sent me on a witch hunt trying to figure out why my exception handler wasn't being called, and I rechecked my IDT initialization code and the ISR stubs. I tried manually triggering interrupts in kernel_main with int $0 assembly instructions and it turned out that my exceptions were being handled. The issue was that for a statement like "int x = 5 / 0;", the compiler most likely optimizes it in some way (still not sure exactly how) so the exception isn't triggered. I reworked this to use assembly instructions in kernel_main to force the machine division, and the "CPU EXCEPTION" message printed correctly.
+
+My next step is to finally write a PS/2 keyboard driver so I can get keyboard input. I'm pretty sure I have all the prerequisites, like initializing the IDT and PIC. I think I'll have to add 16 more entries to the IDT for the hardware interrupts (IRQs). Hopefully I don't run into any issues with the PIC or any of the code I wrote for the I/O ports. I still have to make sure to save all registers at the start of the interrupt handlers and restore them at the end. I should also probably initialize a timer (PIT), as it will eventually be important for implementing a scheduler or triggering interrupts. I'm eager to add creative features to this project, but right now it's a lot of boilerplate and setting up stuff that has to be done for any OS. I think I'm doing a good job of getting a somewhat in-depth understanding of the topics instead of mindlessly copying code.
+ 
+<img width="720" height="144" alt="image" src="https://github.com/user-attachments/assets/bee83423-c848-405a-a469-9c72512dec70" />
+
+Resources:
+- https://wiki.osdev.org/8259_PIC
+
+
+
