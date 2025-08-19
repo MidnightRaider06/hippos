@@ -1,5 +1,6 @@
 #include <kernel/pic8259.h>
 #include <kernel/io.h>
+#include <stdio.h>
 
 /**
  * Remaps the PIC interrupt vectors.
@@ -137,4 +138,24 @@ uint16_t pic_get_irr(void)
 uint16_t pic_get_isr(void)
 {
     return __pic_get_irq_reg(PIC_READ_ISR);
+}
+
+void translatePicInterrupt(uint8_t interruptCode) {
+    uint8_t irq = interruptCode - PIC1;
+    switch (irq) {
+    
+        case 1: { //KEYBOARD
+            printf("KEYBOARD INTERRUPT\n");
+            uint8_t scanCode = inb(0x60);
+            //keyboardInterrupt(scanCode);   //TODO: IMPLEMENT KEYBOARD DRIVER AND PS/2 CONTROLLER     
+            PIC_sendEOI(irq);
+
+            break;
+        }
+
+        default: {
+            printf("Unhandled PIC Interrupt!\n");
+            break;
+        }
+    }
 }

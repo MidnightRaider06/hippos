@@ -3,11 +3,12 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <kernel/io.h>
 
 __attribute__((aligned(0x10))) 
 static idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance
 
-#define IDT_MAX_DESCRIPTORS 32
+#define IDT_MAX_DESCRIPTORS 48 // CPU exceptions (0-31) + PIC IRQs (32-47)
 static idtr_t idtr;
 static bool vectors[IDT_MAX_DESCRIPTORS];
 
@@ -15,9 +16,14 @@ static bool vectors[IDT_MAX_DESCRIPTORS];
 void interrupt_handler(uint32_t interruptCode) {
 
     if (interruptCode < 32) {
-        printf("CPU EXCEPTION: \n");
+        cpuException(interruptCode);
+    } else if (interruptCode >= 32 && interruptCode < 48) {
+        translatePicInterrupt(interruptCode);
+    } else {
+        printf("UNHANDLED EXCEPTION\n");
+        __asm__ volatile ("cli; hlt"); // Completely hangs the computer
     }
-    __asm__ volatile ("cli; hlt"); // Completely hangs the computer
+    
 }
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
@@ -37,13 +43,27 @@ void initidt() {
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
+    // Add IRQs 0-31 (CPU exceptions)
     for (uint8_t vector = 0; vector < 32; vector++) {
         idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
         vectors[vector] = true;
     }
 
+    // Add IRQs 32–47 (hardware interrupts)
+    for (uint8_t vector = 32; vector < 48; vector++) {
+        idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
+        vectors[vector] = true;
+    }
+
+    PIC_remap(PIC1, PIC2);
+    outb(PIC1 + 1, 0xFD); // 0b11111101 = unmask IRQ1, mask the rest
+
     __asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
     __asm__ volatile ("sti"); // set the interrupt flag
 
-    PIC_remap(PIC1, PIC2);
+    
+}
+
+void cpuException(uint8_t interruptCode) {
+    printf("CPU EXCEPTION: \n");
 }
